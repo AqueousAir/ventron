@@ -1,46 +1,32 @@
 (function () {
-  var STORAGE_KEY = 'ventron_distributor_applications';
   var form = document.getElementById('distributorForm');
-
-  function readHistory() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    } catch (error) {
-      return [];
-    }
-  }
-
-  function saveHistory(items) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }
 
   if (!form) return;
 
   form.addEventListener('submit', function (event) {
     event.preventDefault();
 
-    var formData = new FormData(form);
-    var payload = {
-      id: 'D-' + Date.now(),
-      submittedAt: new Date().toISOString(),
-      fullName: formData.get('fullName') || '',
-      email: formData.get('email') || '',
-      phone: formData.get('phone') || '',
-      company: formData.get('company') || '',
-      website: formData.get('website') || '',
-      location: formData.get('location') || '',
-      businessType: formData.get('businessType') || '',
-      productInterest: formData.get('productInterest') || '',
-      volume: formData.get('volume') || '',
-      markets: formData.get('markets') || '',
-      requirements: formData.get('requirements') || ''
-    };
+    var gsheet = window.VentronFormsGSheet;
+    if (!gsheet || typeof gsheet.submit !== 'function') {
+      if (gsheet && typeof gsheet.showStatus === 'function') {
+        gsheet.showStatus(form, 'error', 'Form integration is not loaded. Please try again.');
+      } else {
+        alert('Form integration is not loaded. Please try again.');
+      }
+      return;
+    }
 
-    var history = readHistory();
-    history.unshift(payload);
-    saveHistory(history);
-
-    alert('Distributor application submitted. Reference: ' + payload.id + '.');
-    form.reset();
+    gsheet.submit({
+      form: form,
+      tab: 'Distributor',
+      extras: { formType: 'Distributor' }
+    }).then(function (ok) {
+      if (!ok) {
+        gsheet.showStatus(form, 'error', 'Could not submit distributor application. Please try again.');
+        return;
+      }
+      gsheet.showStatus(form, 'success', 'Distributor application submitted successfully.');
+      form.reset();
+    });
   });
 })();

@@ -1,7 +1,6 @@
 (function () {
   var QUOTE_KEY = 'ventron_quote_items';
   var QTY_KEY = 'ventron_quote_qty';
-  var SUBMIT_KEY = 'ventron_quote_submissions';
 
   var quoteList = document.getElementById('quoteList');
   var selectedCount = document.getElementById('selectedCount');
@@ -156,34 +155,46 @@
       event.preventDefault();
 
       var items = buildQuoteItems();
+      var gsheet = window.VentronFormsGSheet;
       if (!items.length) {
-        alert('Please add at least one product to quote before submitting.');
+        if (gsheet && typeof gsheet.showStatus === 'function') {
+          gsheet.showStatus(quoteForm, 'error', 'Please add at least one product to quote before submitting.');
+        } else {
+          alert('Please add at least one product to quote before submitting.');
+        }
         return;
       }
 
-      var formData = new FormData(quoteForm);
-      var payload = {
-        id: 'Q-' + Date.now(),
-        submittedAt: new Date().toISOString(),
-        fullName: formData.get('fullName') || '',
-        email: formData.get('email') || '',
-        phone: formData.get('phone') || '',
-        company: formData.get('company') || '',
-        location: formData.get('location') || '',
-        projectType: formData.get('projectType') || '',
-        timeline: formData.get('timeline') || '',
-        requirements: formData.get('requirements') || '',
-        items: items
-      };
+      if (!gsheet || typeof gsheet.submit !== 'function') {
+        if (gsheet && typeof gsheet.showStatus === 'function') {
+          gsheet.showStatus(quoteForm, 'error', 'Form integration is not loaded. Please try again.');
+        } else {
+          alert('Form integration is not loaded. Please try again.');
+        }
+        return;
+      }
 
-      var history = readJson(SUBMIT_KEY, []);
-      history.unshift(payload);
-      writeJson(SUBMIT_KEY, history);
+      var qtyTotal = items.reduce(function (sum, item) { return sum + item.qty; }, 0);
 
-      alert('Quote request submitted. Reference: ' + payload.id + '.');
-      quoteForm.reset();
-      persistQuoteItems([]);
-      renderQuoteItems();
+      gsheet.submit({
+        form: quoteForm,
+        tab: 'Quotes',
+        extras: {
+          formType: 'Quote',
+          selectedProducts: JSON.stringify(items),
+          productCount: String(items.length),
+          totalQuantity: String(qtyTotal)
+        }
+      }).then(function (ok) {
+        if (!ok) {
+          gsheet.showStatus(quoteForm, 'error', 'Could not submit quote request. Please try again.');
+          return;
+        }
+        gsheet.showStatus(quoteForm, 'success', 'Quote request submitted successfully.');
+        quoteForm.reset();
+        persistQuoteItems([]);
+        renderQuoteItems();
+      });
     });
   }
 

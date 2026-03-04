@@ -85,12 +85,4 @@
     }, 4200);
   }
 
-  var contactForm = document.getElementById('contactForm');
-  if (contactForm) {
-    contactForm.addEventListener('submit', function (event) {
-      event.preventDefault();
-      alert('Thanks. This is a demo form. Connect it to your backend/API for live submissions.');
-      contactForm.reset();
-    });
-  }
 })();
