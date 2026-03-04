@@ -1,0 +1,92 @@
+.contact-hero {
+  position: relative;
+  isolation: isolate;
+  padding-top: 132px;
+  padding-bottom: 34px;
+  background-image: url('../img/hero2.png');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+.contact-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(760px 320px at 12% 20%, rgba(18, 183, 210, 0.32), transparent 68%),
+    linear-gradient(95deg, rgba(2, 18, 24, 0.8) 0%, rgba(5, 40, 48, 0.66) 48%, rgba(8, 58, 67, 0.56) 100%);
+}
+
+.contact-hero-inner {
+  position: relative;
+  max-width: 780px;
+}
+
+.contact-hero h1 {
+  margin: 0;
+  font-size: clamp(32px, 4.6vw, 52px);
+  line-height: 1.06;
+  font-family: var(--font-heading);
+}
+
+.contact-hero p {
+  margin: 10px 0 0;
+  color: #d5e9ee;
+}
+
+.contact-page-main {
+  background: #f3f8fb;
+}
+
+.contact-page-grid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.contact-card {
+  margin-top: 12px;
+  border: 1px solid #d8e4ea;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+
+.contact-card h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-heading);
+}
+
+.contact-card p {
+  margin: 0 0 7px;
+  color: #58707a;
+}
+
+.contact-card a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 960px) {
+  .contact-page-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .contact-hero {
+    padding-top: 116px;
+    padding-bottom: 28px;
+  }
+
+  .contact-page-grid {
+    gap: 12px;
+  }
+
+  .contact-card {
+    padding: 10px;
+  }
+}
