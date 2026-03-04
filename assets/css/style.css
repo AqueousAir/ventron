@@ -495,6 +495,40 @@ textarea { resize: vertical; }
   margin: 8px 0;
 }
 
+.social-links {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer a.social-icon {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e6f3f7;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.footer a.social-icon:hover {
+  background: rgba(40, 184, 208, 0.25);
+  border-color: rgba(40, 184, 208, 0.7);
+  transform: translateY(-1px);
+}
+
+.footer a.social-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
+}
+
 @media (max-width: 1080px) {
   body.menu-open {
     overflow: hidden;
