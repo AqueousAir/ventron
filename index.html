@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ventron Energy">
+  <title>Ventron Energy</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #050605;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .fullscreen-bg {
+      position: relative;
+      isolation: isolate;
+      width: 100vw;
+      height: 100vh;
+      background-image: url("assets/bg.png");
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .brand-lockup {
+      position: absolute;
+      z-index: 1;
+      top: clamp(72px, 12vh, 132px);
+      left: clamp(28px, 7vw, 116px);
+      width: clamp(240px, 26vw, 420px);
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .brand-lockup img {
+      display: block;
+      width: clamp(190px, 19vw, 330px);
+      height: auto;
+      margin: 0 auto;
+      filter: drop-shadow(0 18px 42px rgba(0, 16, 42, .42));
+    }
+
+    .tagline {
+      max-width: 420px;
+      margin: clamp(18px, 2.2vw, 28px) 0 0;
+      color: rgba(235, 248, 255, .88);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: clamp(20px, 2.1vw, 34px);
+      font-weight: 400;
+      line-height: 1.18;
+      letter-spacing: 0;
+      text-align: center;
+      text-shadow: 0 14px 40px rgba(0, 16, 42, .54);
+    }
+
+    @media (max-width: 700px) {
+      .fullscreen-bg {
+        background-position: 42% center;
+      }
+
+      .brand-lockup {
+        top: 46px;
+        left: 26px;
+        width: calc(100vw - 52px);
+      }
+
+      .brand-lockup img {
+        width: 184px;
+      }
+
+      .tagline {
+        max-width: 300px;
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="fullscreen-bg" aria-label="Ventron Energy">
+    <div class="brand-lockup">
+      <img src="assets/ventron-logo.png" alt="Ventron Energy">
+      <p class="tagline">Ventron is an AI energy intelligence platform</p>
+    </div>
+  </main>
+</body>
+</html>
