@@ -265,6 +265,107 @@
     });
   });
 
+  const orderForm = document.querySelector('#awg-order-form');
+  if (orderForm) {
+    const status = orderForm.querySelector('.form-status');
+    const submitButton = orderForm.querySelector('button[type="submit"]');
+    const successMessage = 'Thank you. Your VENTRON AWG order request has been received. Our team will review your location and project requirements and contact you shortly.';
+    const errorMessage = 'We could not send the request automatically. Please try again shortly.';
+
+    const setFormStatus = (message, type = '') => {
+      if (!status) return;
+      status.textContent = message;
+      status.className = `form-status ${type}`.trim();
+    };
+
+    const formDataToObject = formData => {
+      const data = {};
+      formData.forEach((value, key) => {
+        if (key.startsWith('_')) return;
+        data[key] = value;
+      });
+      return data;
+    };
+
+    const buildSubmissionPayload = formData => {
+      const fieldOrder = [
+        'Full Name',
+        'Company Name',
+        'Email Address',
+        'Phone / WhatsApp',
+        'Country',
+        'City / Project Location',
+        'Type of Customer / Project',
+        'Required Water Production Per Day',
+        'Average Temperature Range',
+        'Average Humidity Level',
+        'Installation Environment',
+        'Number of Machines Required',
+        'Expected Purchase Timeline',
+        'Additional Notes / Project Description'
+      ];
+      const data = formDataToObject(formData);
+      const lines = [
+        'New VENTRON AWG Order Request',
+        '',
+        'Customer Information',
+        '--------------------'
+      ];
+      fieldOrder.forEach((field, index) => {
+        if (index === 6) lines.push('', 'Project Information', '-------------------');
+        lines.push(`${field}: ${data[field] || 'Not provided'}`);
+      });
+      return {
+        subject: 'New VENTRON AWG Order Request',
+        page: window.location.href,
+        submittedAt: new Date().toISOString(),
+        fields: data,
+        emailBody: lines.join('\n')
+      };
+    };
+
+    orderForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      setFormStatus('');
+
+      if (!orderForm.checkValidity()) {
+        orderForm.reportValidity();
+        setFormStatus('Please complete the required fields before submitting.', 'error');
+        return;
+      }
+
+      const formData = new FormData(orderForm);
+      if (formData.get('_honey')) return;
+      const endpoint = (orderForm.dataset.endpoint || '').trim();
+      if (!endpoint || endpoint.includes('PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE')) {
+        setFormStatus('Google Apps Script endpoint is not connected yet. Paste the deployed Web App URL into the form data-endpoint attribute.', 'error');
+        return;
+      }
+      const payload = buildSubmissionPayload(formData);
+
+      orderForm.classList.add('is-loading');
+      submitButton?.setAttribute('disabled', 'disabled');
+      setFormStatus('Submitting your order request...', '');
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        orderForm.reset();
+        setFormStatus(successMessage, 'success');
+      } catch (error) {
+        setFormStatus(errorMessage, 'error');
+      } finally {
+        orderForm.classList.remove('is-loading');
+        submitButton?.removeAttribute('disabled');
+      }
+    });
+  }
+
   if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
     document.querySelectorAll('[data-tilt]').forEach(card => {
       card.addEventListener('pointermove', event => {
